@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 // FIX: The preset types are defined in App.tsx, not patterns.ts
 import type { AnimationPreset, InteractivePreset } from '../App';

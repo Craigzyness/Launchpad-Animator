@@ -1,4 +1,3 @@
-
 import { AnimationPreset, InteractivePreset, Layer } from './App';
 import { RAINBOW_CODES, GRID_NOTES, OFF_COLOR } from './constants';
 import { createBlankLayer } from './utils/colorUtils';

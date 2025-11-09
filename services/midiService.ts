@@ -1,4 +1,3 @@
-
 // FIX: Import GRID_NOTES to be used in the new getNoteFromMouse function.
 import { GRID_NOTES } from '../constants';
 

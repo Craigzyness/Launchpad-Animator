@@ -1,4 +1,3 @@
-
 import { LAUNCHPAD_COLOR_MAP_HEX, GRID_NOTES, OFF_COLOR } from '../constants';
 
 // FIX: Add createBlankLayer utility function to be shared across the app.
