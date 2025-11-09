@@ -1,0 +1,5 @@
+{
+  "name": "Launchpad MK2 Light Controller",
+  "description": "A web-based application to control the lights on a Novation Launchpad MK2 via the Web MIDI API. Create and visualize colorful light patterns directly from your browser.",
+  "requestFramePermissions": []
+}
