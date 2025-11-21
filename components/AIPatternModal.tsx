@@ -113,6 +113,7 @@ export const AIPatternModal: React.FC<AIPatternModalProps> = ({ onClose, onGener
       });
 
       onGenerate(newFrames);
+      onClose();
 
     } catch (err: any) {
       console.error("AI Generation Error:", err);

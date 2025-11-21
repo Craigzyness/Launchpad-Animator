@@ -1,4 +1,5 @@
 
+
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { LaunchpadGrid } from './components/LaunchpadGrid';
 import { AnimationControls } from './components/AnimationControls';
@@ -14,9 +15,11 @@ import { TransitionModal } from './components/TransitionModal';
 import { SaveLoadControls } from './components/SaveLoadControls';
 import { ConfirmationModal, ConfirmationState } from './components/ConfirmationModal';
 import { AIPatternModal } from './components/AIPatternModal';
+import { ToastContainer, useToast } from './components/Toast';
 import * as midiService from './services/midiService';
 import { LAUNCHPAD_COLOR_MAP_HEX, OFF_COLOR, COLOR_PALETTE, DEFAULT_FRAME_DURATION, INITIAL_FPS } from './constants';
 import { useInterval } from './hooks/useInterval';
+import { useHistory } from './hooks/useHistory';
 import { createBlankLayer, findClosestColorCode } from './utils/colorUtils';
 import { performToolAction, isShapeTool, isContinuousTool, transformFrame } from './services/drawingService';
 import { exportToGif } from './services/gifExporter';
@@ -107,6 +110,7 @@ export const App: React.FC = () => {
   const [isTransitionModalOpen, setIsTransitionModalOpen] = useState(false);
   const [transitionTargetFrame, setTransitionTargetFrame] = useState(0);
   const [confirmationState, setConfirmationState] = useState<ConfirmationState>({ isOpen: false });
+  const { toasts, addToast, removeToast } = useToast();
   
   // Preset & Effect State
   const [activePreset, setActivePreset] = useState<AnimationPreset | null>(null);
@@ -120,37 +124,38 @@ export const App: React.FC = () => {
 
 
   // Undo/Redo State
-  const [history, setHistory] = useState<Frame[][]>([frames]);
-  const [historyIndex, setHistoryIndex] = useState(0);
+  const { 
+      push: pushHistory, 
+      undo: undoHistory, 
+      redo: redoHistory, 
+      canUndo, 
+      canRedo, 
+      reset: resetHistory 
+  } = useHistory<Frame[]>(frames);
 
   const currentFrame = frames[currentFrameIndex];
 
   // --- HISTORY MANAGEMENT ---
   const commitToHistory = (newFrames: Frame[]) => {
-      const newHistory = history.slice(0, historyIndex + 1);
-      newHistory.push(newFrames);
-      setHistory(newHistory);
-      setHistoryIndex(newHistory.length - 1);
+      pushHistory(newFrames);
   };
   
   const handleUndo = useCallback(() => {
-      if (historyIndex > 0) {
-          const newIndex = historyIndex - 1;
-          setHistoryIndex(newIndex);
-          setFrames(history[newIndex]);
-          if(currentFrameIndex >= history[newIndex].length) {
-              setCurrentFrameIndex(history[newIndex].length - 1);
+      const previousState = undoHistory();
+      if (previousState) {
+          setFrames(previousState);
+          if(currentFrameIndex >= previousState.length) {
+              setCurrentFrameIndex(previousState.length - 1);
           }
       }
-  }, [history, historyIndex, currentFrameIndex]);
+  }, [undoHistory, currentFrameIndex]);
 
   const handleRedo = useCallback(() => {
-      if (historyIndex < history.length - 1) {
-          const newIndex = historyIndex + 1;
-          setHistoryIndex(newIndex);
-          setFrames(history[newIndex]);
+      const nextState = redoHistory();
+      if (nextState) {
+          setFrames(nextState);
       }
-  }, [history, historyIndex]);
+  }, [redoHistory]);
 
 
   // --- DERIVED STATE & RENDERING ---
@@ -268,16 +273,16 @@ export const App: React.FC = () => {
     try {
       const devices = await midiService.getAvailableLaunchpads();
       if (devices.length === 0) {
-        alert("No Launchpad MK2 devices found. Please ensure it's connected and your browser has MIDI permissions.");
+        addToast("No Launchpad MK2 devices found. Please ensure it's connected and your browser has MIDI permissions.", 'error');
       } else if (devices.length === 1) {
         await connectToDevice(devices[0].id);
       } else {
         setAvailableDevices(devices);
         setIsDeviceModalOpen(true);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Failed to get MIDI devices:", error);
-      alert("Could not access MIDI devices. Please check your browser permissions.");
+      addToast(`Could not access MIDI devices: ${error.message}`, 'error');
     } finally {
       setIsConnecting(false);
     }
@@ -289,6 +294,7 @@ export const App: React.FC = () => {
         const success = await midiService.connect(id, handleMidiMessage);
         if (success) {
           setIsConnected(true);
+          addToast("Connected to Launchpad MK2", 'success');
           
           setTimeout(() => {
             if (!midiService.isConnected()) return;
@@ -307,11 +313,11 @@ export const App: React.FC = () => {
           }, 100);
 
         } else {
-          alert("Failed to connect to the Launchpad device. It might be in use by another application.");
+          addToast("Failed to connect to the Launchpad device. It might be in use by another application.", 'error');
         }
-    } catch (error) {
+    } catch (error: any) {
         console.error("Error connecting to Launchpad:", error);
-        alert(`An error occurred while connecting to the Launchpad. Please ensure it is not in use by another program and that MIDI permissions have been granted. Error: ${error.message}`);
+        addToast(`Connection error: ${error.message}`, 'error');
     }
     setIsDeviceModalOpen(false);
     setIsConnecting(false);
@@ -320,6 +326,7 @@ export const App: React.FC = () => {
   const handleDisconnect = async () => {
     await midiService.disconnect();
     setIsConnected(false);
+    addToast("Disconnected from Launchpad", 'info');
   };
   
     // --- KEYBOARD SHORTCUTS ---
@@ -433,9 +440,9 @@ export const App: React.FC = () => {
         setCurrentFrameIndex(0);
         setActivePreset(null);
         setEditableEffect(null);
-        setHistory([newFrames]);
-        setHistoryIndex(0);
+        resetHistory(newFrames);
         setConfirmationState({ isOpen: false });
+        addToast("Project cleared", 'info');
       },
       onCancel: () => setConfirmationState({ isOpen: false }),
     });
@@ -454,6 +461,7 @@ export const App: React.FC = () => {
         setFrames(clearedFrames);
         commitToHistory(clearedFrames);
         setConfirmationState({ isOpen: false });
+        addToast("All frames cleared", 'info');
       },
       onCancel: () => setConfirmationState({ isOpen: false }),
     });
@@ -538,11 +546,13 @@ export const App: React.FC = () => {
   
   const handleCopyFrameContent = () => {
     setCopiedFrameContent(currentFrame.layer);
+    addToast("Frame copied to clipboard", 'info');
   };
 
   const handlePasteFrameContent = () => {
     if (!copiedFrameContent) return;
     updateFrame(currentFrameIndex, { ...currentFrame, layer: { ...copiedFrameContent } });
+    addToast("Frame pasted", 'info');
   };
   
   const handleToolChange = (tool: Tool) => {
@@ -566,7 +576,10 @@ export const App: React.FC = () => {
     setExportProgress(0);
     const frameLayers = frames.map(frame => frame.layer);
     exportToGif(frameLayers, frames.map(f => f.duration), LAUNCHPAD_COLOR_MAP_HEX, setExportProgress)
-      .finally(() => setIsExporting(false));
+      .finally(() => {
+          setIsExporting(false);
+          addToast("GIF Export Complete", 'success');
+      });
   };
   
   const handleGenerateMarquee = (text: string, color: number, speed: number) => {
@@ -583,6 +596,7 @@ export const App: React.FC = () => {
         commitToHistory(newFrames);
         setCurrentFrameIndex(0);
         setFps(speed);
+        addToast("Marquee text generated", 'success');
       }
       setIsMarqueeModalOpen(false);
   };
@@ -597,6 +611,7 @@ export const App: React.FC = () => {
         commitToHistory(newFrames);
         setCurrentFrameIndex(0);
         setFps(Math.round(1000 / newFrames[0].duration));
+        addToast("Typing text generated", 'success');
       }
       setIsTypingModalOpen(false);
   };
@@ -609,6 +624,8 @@ export const App: React.FC = () => {
         // Reset state
         setActivePreset(null);
         setEditableEffect(null);
+        setIsAIModalOpen(false);
+        addToast("AI Pattern generated", 'success');
     }
   };
   
@@ -682,6 +699,7 @@ export const App: React.FC = () => {
     setFrames(allFrames);
     commitToHistory(allFrames);
     setIsTransitionModalOpen(false);
+    addToast("Transition frames generated", 'success');
   };
   
   const handleAddCustomColor = (hex: string) => {
@@ -709,6 +727,7 @@ export const App: React.FC = () => {
     };
     const blob = new Blob([JSON.stringify(projectState, null, 2)], { type: "application/json;charset=utf-8" });
     saveAs(blob, `${projectName.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.json`);
+    addToast("Project saved", 'success');
   };
 
   const handleLoadProject = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -723,10 +742,10 @@ export const App: React.FC = () => {
                 setFps(projectState.fps);
                 setProjectName(projectState.projectName || 'Loaded Project');
                 setCurrentFrameIndex(0);
-                setHistory([projectState.frames]);
-                setHistoryIndex(0);
+                resetHistory(projectState.frames);
+                addToast("Project loaded successfully", 'success');
             } catch (err) {
-                alert("Error: Could not parse project file.");
+                addToast("Error: Could not parse project file.", 'error');
                 console.error(err);
             }
         };
@@ -808,9 +827,9 @@ export const App: React.FC = () => {
           onToggleOnionSkin={() => setOnionSkinEnabled(!onionSkinEnabled)}
           onTransformClick={() => setIsTransformModalOpen(true)}
           onUndo={handleUndo}
-          canUndo={historyIndex > 0}
+          canUndo={canUndo}
           onRedo={handleRedo}
-          canRedo={historyIndex < history.length - 1}
+          canRedo={canRedo}
         />
         <FrameStrip
           frames={frames}
@@ -829,6 +848,7 @@ export const App: React.FC = () => {
         />
       </div>
       
+      <ToastContainer toasts={toasts} onDismiss={removeToast} />
       <ConfirmationModal {...confirmationState} />
       {isDeviceModalOpen && <DeviceSelectionModal devices={availableDevices} onSelect={connectToDevice} onCancel={() => setIsDeviceModalOpen(false)} />}
       {isExporting && <GifExportModal progress={exportProgress} />}
