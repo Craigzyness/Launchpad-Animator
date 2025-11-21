@@ -13,6 +13,7 @@ import { TransformModal } from './components/TransformModal';
 import { TransitionModal } from './components/TransitionModal';
 import { SaveLoadControls } from './components/SaveLoadControls';
 import { ConfirmationModal, ConfirmationState } from './components/ConfirmationModal';
+import { AIPatternModal } from './components/AIPatternModal';
 import * as midiService from './services/midiService';
 import { LAUNCHPAD_COLOR_MAP_HEX, OFF_COLOR, COLOR_PALETTE, DEFAULT_FRAME_DURATION, INITIAL_FPS } from './constants';
 import { useInterval } from './hooks/useInterval';
@@ -100,6 +101,7 @@ export const App: React.FC = () => {
   const [exportProgress, setExportProgress] = useState(0);
   const [isMarqueeModalOpen, setIsMarqueeModalOpen] = useState(false);
   const [isTypingModalOpen, setIsTypingModalOpen] = useState(false);
+  const [isAIModalOpen, setIsAIModalOpen] = useState(false);
   const [isPresetLibraryOpen, setIsPresetLibraryOpen] = useState<{ open: boolean; type: 'animation' | 'effect' }>({ open: false, type: 'animation' });
   const [isTransformModalOpen, setIsTransformModalOpen] = useState(false);
   const [isTransitionModalOpen, setIsTransitionModalOpen] = useState(false);
@@ -344,7 +346,7 @@ export const App: React.FC = () => {
                 return;
             }
 
-            if (isMarqueeModalOpen || isTypingModalOpen || isPresetLibraryOpen.open || isDeviceModalOpen || isTransformModalOpen || isTransitionModalOpen) return;
+            if (isMarqueeModalOpen || isTypingModalOpen || isPresetLibraryOpen.open || isDeviceModalOpen || isTransformModalOpen || isTransitionModalOpen || isAIModalOpen) return;
 
             switch(e.key.toLowerCase()) {
                 case 'p': setActiveTool('draw'); break;
@@ -359,7 +361,7 @@ export const App: React.FC = () => {
         };
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [handleUndo, handleRedo, isPlaying, frames, currentFrameIndex, isMarqueeModalOpen, isTypingModalOpen, isPresetLibraryOpen, isDeviceModalOpen, isTransformModalOpen, isTransitionModalOpen, confirmationState.isOpen]);
+    }, [handleUndo, handleRedo, isPlaying, frames, currentFrameIndex, isMarqueeModalOpen, isTypingModalOpen, isPresetLibraryOpen, isDeviceModalOpen, isTransformModalOpen, isTransitionModalOpen, isAIModalOpen, confirmationState.isOpen]);
 
 
   // --- ANIMATION HANDLING ---
@@ -598,6 +600,17 @@ export const App: React.FC = () => {
       }
       setIsTypingModalOpen(false);
   };
+
+  const handleAIGenerate = (newFrames: Frame[]) => {
+    if (newFrames.length > 0) {
+        setFrames(newFrames);
+        commitToHistory(newFrames);
+        setCurrentFrameIndex(0);
+        // Reset state
+        setActivePreset(null);
+        setEditableEffect(null);
+    }
+  };
   
   const handlePresetSelect = (preset: AnimationPreset | InteractivePreset) => {
       if (preset.type === 'animation') {
@@ -751,7 +764,7 @@ export const App: React.FC = () => {
               isEffectArmed={!!editableEffect}
             />
           </div>
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 h-full">
              <EditingPanel
                 selectedColor={selectedColor}
                 onColorSelect={setSelectedColor}
@@ -763,6 +776,7 @@ export const App: React.FC = () => {
                 onToolChange={handleToolChange}
                 onTextTool={() => setIsMarqueeModalOpen(true)}
                 onTypingTool={() => setIsTypingModalOpen(true)}
+                onAITool={() => setIsAIModalOpen(true)}
                 symmetry={symmetry}
                 onSymmetryChange={setSymmetry}
                 onAnimationsClick={() => setIsPresetLibraryOpen({ open: true, type: 'animation' })}
@@ -820,6 +834,7 @@ export const App: React.FC = () => {
       {isExporting && <GifExportModal progress={exportProgress} />}
       {isMarqueeModalOpen && <MarqueeTextModal onClose={() => setIsMarqueeModalOpen(false)} onGenerate={handleGenerateMarquee} selectedColor={selectedColor} palette={palette} colorMap={LAUNCHPAD_COLOR_MAP_HEX} />}
       {isTypingModalOpen && <TypingTextModal onClose={() => setIsTypingModalOpen(false)} onGenerate={handleGenerateTyping} selectedColor={selectedColor} />}
+      {isAIModalOpen && <AIPatternModal onClose={() => setIsAIModalOpen(false)} onGenerate={handleAIGenerate} />}
       {isPresetLibraryOpen.open && <PresetLibraryModal title={isPresetLibraryOpen.type === 'animation' ? "Animation Library" : "Effects Library"} presets={isPresetLibraryOpen.type === 'animation' ? ANIMATION_PRESETS : INTERACTIVE_PRESETS} onClose={() => setIsPresetLibraryOpen({ open: false, type: 'animation' })} onSelect={handlePresetSelect} />}
       {isTransformModalOpen && <TransformModal onTransform={handleTransform} onClose={() => setIsTransformModalOpen(false)} />}
       {isTransitionModalOpen && <TransitionModal onGenerate={handleCreateTransition} onClose={() => setIsTransitionModalOpen(false)} />}

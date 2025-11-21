@@ -12,7 +12,7 @@ const EraserIcon = (): React.ReactElement => <svg xmlns="http://www.w3.org/2000/
 const PaintBucketIcon = (): React.ReactElement => <svg xmlns="http://www.w3.org/2000/svg" className={iconClass} fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M9.53 16.122a3 3 0 00-5.78 1.128 2.25 2.25 0 01-2.47 2.118v-.092c0-.537.436-.97.97-.97h.092l3.483-.058a2.25 2.25 0 001.824-1.824l.058-3.483a.97.97 0 00-.97-.97h-.092l-2.118 2.47a3 3 0 00-1.128 5.78z" /><path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.994-9.992 9.004 9.004 0 00-8.994-8.994A9.004 9.004 0 003 12c0 4.192 2.868 7.728 6.726 8.654z" /></svg>;
 const EyeDropperIcon = (): React.ReactElement => <svg xmlns="http://www.w3.org/2000/svg" className={iconClass} fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.898 20.572L16.5 21.75l-.398-1.178a3.375 3.375 0 00-2.456-2.456L12.75 18l1.178-.398a3.375 3.375 0 002.456-2.456L17.25 14.25l.398 1.178a3.375 3.375 0 002.456 2.456l1.178.398-1.178.398a3.375 3.375 0 00-2.456 2.456z" /></svg>;
 const LineIcon = (): React.ReactElement => <svg xmlns="http://www.w3.org/2000/svg" className={iconClass} fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 3.75l16.5 16.5" /></svg>;
-const GradientIcon = (): React.ReactElement => <svg xmlns="http://www.w3.org/2000/svg" className={iconClass} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" /></svg>;
+const GradientIcon = (): React.ReactElement => <svg xmlns="http://www.w3.org/2000/svg" className={iconClass} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}><path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" /></svg>;
 const RectIcon = (): React.ReactElement => <svg xmlns="http://www.w3.org/2000/svg" className={iconClass} fill="currentColor" viewBox="0 0 20 20"><path d="M4 3a1 1 0 00-1 1v12a1 1 0 001 1h12a1 1 0 001-1V4a1 1 0 00-1-1H4z" /></svg>;
 const RectOutlineIcon = (): React.ReactElement => <svg xmlns="http://www.w3.org/2000/svg" className={iconClass} fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M5.25 7.5A2.25 2.25 0 017.5 5.25h9a2.25 2.25 0 012.25 2.25v9a2.25 2.25 0 01-2.25 2.25h-9a2.25 2.25 0 01-2.25-2.25v-9z" /></svg>;
 const CircleIcon = (): React.ReactElement => <svg xmlns="http://www.w3.org/2000/svg" className={iconClass} fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>;
@@ -23,6 +23,7 @@ const TypeIcon = (): React.ReactElement => <svg xmlns="http://www.w3.org/2000/sv
 const CopyIcon = (): React.ReactElement => <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M7 9a2 2 0 012-2h6a2 2 0 012 2v6a2 2 0 01-2 2H9a2 2 0 01-2-2V9z" /><path d="M5 3a2 2 0 00-2 2v6a2 2 0 002 2V5h6a2 2 0 00-2-2H5z" /></svg>;
 const PasteIcon = (): React.ReactElement => <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M8 2a1 1 0 000 2h2a1 1 0 100-2H8z" /><path d="M3 5a2 2 0 012-2h6a2 2 0 012 2v12a2 2 0 01-2 2H5a2 2 0 01-2-2V5zm3 0v10h6V5H6z" /></svg>;
 const ClearIcon = (): React.ReactElement => <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" /></svg>;
+const AIIcon = (): React.ReactElement => <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fillRule="evenodd" d="M5 2a1 1 0 011 1v1h1a1 1 0 010 2H6v1a1 1 0 01-2 0V6H3a1 1 0 010-2h1V3a1 1 0 011-1zm0 9a1 1 0 011 1v1h1a1 1 0 110 2H6v1a1 1 0 11-2 0v-1H3a1 1 0 110-2h1v-1a1 1 0 011-1zm7-1a1 1 0 100 2 1 1 0 000-2zm-8 1a1 1 0 110 2 1 1 0 010-2zm12.293-4.293a1 1 0 011.414 1.414L10 16.414l-4.293-4.293a1 1 0 011.414-1.414L10 13.586l5.293-5.293z" clipRule="evenodd" /></svg>;
 
 const tools: { name: Tool, icon: React.ReactElement, tooltip: string, key: string }[] = [
     { name: 'draw', icon: <PencilIcon />, tooltip: 'Draw (P)', key: 'P' },
@@ -51,6 +52,7 @@ interface EditingPanelProps {
     onToolChange: (tool: Tool) => void;
     onTextTool: () => void;
     onTypingTool: () => void;
+    onAITool: () => void;
     symmetry: Symmetry;
     onSymmetryChange: (symmetry: Symmetry) => void;
     onAnimationsClick: () => void;
@@ -95,13 +97,20 @@ export const EditingPanel: React.FC<EditingPanelProps> = (props) => {
     };
 
     return (
-        <div className="p-3 bg-gray-900/50 rounded-lg border border-gray-700 flex flex-col gap-4 h-full">
+        <div className="p-3 bg-gray-900/50 rounded-lg border border-gray-700 flex flex-col gap-4 h-full overflow-y-auto">
             <div className="grid grid-cols-2 gap-2">
                  <button onClick={props.onAnimationsClick} className="p-2 bg-gray-700 rounded-md hover:bg-gray-600 transition-colors flex items-center justify-center gap-2 text-gray-300">
                     <FilmIcon /> <span className="text-sm">Animations</span>
                 </button>
                  <button onClick={props.onEffectsClick} className="p-2 bg-gray-700 rounded-md hover:bg-gray-600 transition-colors flex items-center justify-center gap-2 text-gray-300">
                     <SparklesIcon /> <span className="text-sm">Effects</span>
+                </button>
+            </div>
+
+             <div className="p-3 bg-gray-800/50 rounded-md border border-gray-700">
+                <h3 className="text-sm font-medium text-gray-300 mb-3">AI Generator</h3>
+                <button onClick={props.onAITool} className="w-full p-2 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-md hover:from-indigo-500 hover:to-purple-500 transition-colors flex items-center justify-center gap-2 text-white shadow-lg">
+                    <AIIcon /> <span className="text-sm font-semibold">Generate Pattern</span>
                 </button>
             </div>
 
